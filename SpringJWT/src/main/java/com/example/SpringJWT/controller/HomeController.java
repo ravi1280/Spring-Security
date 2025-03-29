@@ -1,7 +1,6 @@
 package com.example.SpringJWT.controller;
 
 import com.example.SpringJWT.service.JWTService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
