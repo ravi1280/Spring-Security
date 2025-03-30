@@ -1,6 +1,6 @@
 package com.example.spring_jwt.service;
 
-import com.example.spring_jwt.entity.UserEntity;
+import com.example.spring_jwt.entity.User;
 import com.example.spring_jwt.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,7 @@ public class AuthService {
     }
 
 
-    public List<UserEntity> getAllUser() {
+    public List<User> getAllUser() {
         return userRepository.findAll();
     }
 }

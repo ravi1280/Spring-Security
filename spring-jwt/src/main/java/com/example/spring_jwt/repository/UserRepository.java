@@ -1,7 +1,7 @@
 package com.example.spring_jwt.repository;
 
-import com.example.spring_jwt.entity.UserEntity;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import com.example.spring_jwt.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends MongoRepository<UserEntity, String> {
+public interface UserRepository extends JpaRepository<User, String> {
 }

@@ -1,6 +1,6 @@
 package com.example.spring_jwt.controller;
 
-import com.example.spring_jwt.entity.UserEntity;
+import com.example.spring_jwt.entity.User;
 import com.example.spring_jwt.service.AuthService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +18,7 @@ public class AuthController {
     }
 
     @GetMapping()
-    public List<UserEntity> getUser() {
+    public List<User> getUser() {
         return authService.getAllUser();
 
     }
