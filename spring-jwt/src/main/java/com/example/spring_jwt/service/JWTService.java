@@ -41,7 +41,8 @@ public class JWTService {
                     .getPayload()
                     .getSubject();
         } catch (Exception e) {
-            return "Invalid JWT";
+//            return "Invalid JWT";
+            return null;
 
         }
     }
