@@ -2,6 +2,8 @@ package com.example.spring_jwt.service;
 
 import com.example.spring_jwt.dto.LoginRequestDTO;
 import com.example.spring_jwt.dto.LoginResponseDTO;
+import com.example.spring_jwt.dto.RegisterRequestDTO;
+import com.example.spring_jwt.dto.RegisterResponseDTO;
 import com.example.spring_jwt.entity.User;
 import com.example.spring_jwt.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,7 +37,7 @@ public class AuthService {
         return userRepository.findAll();
     }
 
-    public User createUser(User user) {
+    public User createUser(RegisterRequestDTO user) {
 //        System.out.println(user.getPassword().toString());
         User newUser = new User(user.getId(), user.getName(), user.getEmail(), user.getUsername(), passwordEncoder.encode(user.getPassword()));
         return userRepository.save(newUser);
@@ -57,8 +59,20 @@ public class AuthService {
         claims.put("email","company@gmail.com");
 
         String token = jwtService.generateToken(loginRequestDTO.getUsername(),claims);
+        System.out.println(jwtService.getFieldFromToken(token,"role"));
 
         return new LoginResponseDTO(token, LocalDateTime.now(), null, "User successfully logged in");
+    }
+
+    public RegisterResponseDTO register (RegisterRequestDTO registerRequestDTO) {
+        if(isUserExist(registerRequestDTO.getUsername())) {
+            return new RegisterResponseDTO(null,"User Already Exist!");
+        }
+        var userData = this.createUser(registerRequestDTO);
+        if(userData.getId() == null) return new RegisterResponseDTO(null,"System Error !");
+
+        return  new RegisterResponseDTO(null,String.format("User Created %s", userData.getId()));
+
     }
 
     private Boolean isUserExist(String username) {
