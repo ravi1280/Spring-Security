@@ -8,6 +8,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -27,18 +31,49 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest request,@NonNull HttpServletResponse response,@NonNull FilterChain filterChain) throws ServletException, IOException {
 
         String authorizationHeader = request.getHeader("Authorization");
-        if(! authorizationHeader.startsWith("Bearer ")) filterChain.doFilter(request, response);
+                System.out.println(authorizationHeader);
+        if (authorizationHeader == null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        if (!authorizationHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         String token = authorizationHeader.split(" ")[1];
+                System.out.println(token);
         String username = jwtService.getUsername(token);
-        if(username == null) {filterChain.doFilter(request, response);}
+                System.out.println(username);
+
+        if (username == null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         User userData = userRepository.findByUsername(username).orElse(null);
-        if(userData == null) {filterChain.doFilter(request, response);}
-        
-        System.out.println(authorizationHeader);
-        System.out.println(token);
-        System.out.println(username);
+        System.out.println(userData);
+        if (userData == null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
+                .username(userData.getUsername())
+                .password(userData.getPassword())
+                .build();
+
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+
         filterChain.doFilter(request, response);
     }
 }

@@ -23,7 +23,7 @@ public class JWTService {
     }
     public String generateToken() {
         return Jwts.builder()
-                .subject("Ravishka")
+                .subject("Ravi")
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 1000*60*15))
                 .signWith(secretKey)
@@ -41,8 +41,8 @@ public class JWTService {
                     .getPayload()
                     .getSubject();
         } catch (Exception e) {
-//            return "Invalid JWT";
-            return null;
+            return "Invalid JWT";
+//            return null;
 
         }
     }
