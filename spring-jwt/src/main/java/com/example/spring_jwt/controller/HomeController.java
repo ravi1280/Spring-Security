@@ -21,8 +21,8 @@ public class HomeController {
 
     @PostMapping("/login")
     public String login(){
-//        return "Hello Login";
-        return jwtService.generateToken();
+//        return jwtService.generateToken();
+        return "Hello World";
     }
     @GetMapping("username")
     public String getUsername(@RequestParam String token){

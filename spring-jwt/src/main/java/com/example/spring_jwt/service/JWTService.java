@@ -6,6 +6,8 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
+import java.util.Map;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
@@ -21,9 +23,10 @@ public class JWTService {
             throw new RuntimeException(e);
         }
     }
-    public String generateToken() {
+    public String generateToken(String username, Map<String,Object> claims) {
         return Jwts.builder()
-                .subject("Ravi")
+                .claims(claims)
+                .subject(username)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 1000*60*15))
                 .signWith(secretKey)
