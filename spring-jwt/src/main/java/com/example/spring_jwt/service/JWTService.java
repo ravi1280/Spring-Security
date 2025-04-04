@@ -1,5 +1,6 @@
 package com.example.spring_jwt.service;
 
+import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.KeyGenerator;
@@ -35,18 +36,26 @@ public class JWTService {
     }
 
     public String getUsername(String token) {
+        Claims data = getTokenData(token);
+        if(token == null) return null;
+        return data.getSubject();
 
+    }
+    public Object getFieldFromToken(String token, String key) {
+        Claims data = getTokenData(token);
+        if(token == null) return null;
+        return data.get(key);
+    }
+    public Claims getTokenData(String token) {
         try {
             return Jwts
                     .parser()
                     .verifyWith(secretKey).build()
                     .parseSignedClaims(token)
-                    .getPayload()
-                    .getSubject();
+                    .getPayload();
         } catch (Exception e) {
-            return "Invalid JWT";
-//            return null;
-
+            return null;
         }
+
     }
 }
