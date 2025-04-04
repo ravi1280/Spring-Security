@@ -10,18 +10,23 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final JWTService jwtService;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JWTService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
     }
 
 
@@ -47,7 +52,13 @@ public class AuthService {
             return new LoginResponseDTO(null, null, "User not found","Error");
         }
 
-        return new LoginResponseDTO("token", LocalDateTime.now(), null, "User successfully logged in");
+        Map<String, Object> claims = new HashMap<String,Object>();
+        claims.put("role","User");
+        claims.put("email","company@gmail.com");
+
+        String token = jwtService.generateToken(loginRequestDTO.getUsername(),claims);
+
+        return new LoginResponseDTO(token, LocalDateTime.now(), null, "User successfully logged in");
     }
 
     private Boolean isUserExist(String username) {
